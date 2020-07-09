@@ -11,6 +11,7 @@
       <div m-text="counter"></div>
       <div m-html="richText"></div>
       <div @click="handleClick">点击事件</div>
+      <div>{{info}}</div>
 
       <div>
         <input id="inp" type="text" m-model="value" placeholder="输入框" />
@@ -29,10 +30,13 @@
           richText: 'hello <span style="color: red">world</span>',
           value: 0,
           visible: false,
+          list: [0],
+          info: "",
         },
         methods: {
           handleClick() {
-            this.counter++;
+            this.list.push(5);
+            this.info = this.list.join(",");
           },
           handleToggle() {
             this.visible = !this.visible;

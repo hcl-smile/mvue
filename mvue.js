@@ -1,3 +1,5 @@
+const originProto = Array.prototype;
+
 class Vue {
   constructor(options) {
     this.$options = options;
@@ -236,7 +238,15 @@ function observe(obj) {
     return;
   }
 
-  new Observer(obj);
+  if (Array.isArray(obj)) {
+    obj.__proto__ = resetArrayProto();
+
+    obj.forEach((key) => {
+      observe(key);
+    });
+  } else {
+    new Observer(obj);
+  }
 }
 
 function defineReative(obj, key, value) {
@@ -251,6 +261,7 @@ function defineReative(obj, key, value) {
       return value;
     },
     set(newValue) {
+      console.log(888);
       if (newValue !== value) {
         value = newValue;
 
@@ -261,4 +272,19 @@ function defineReative(obj, key, value) {
       }
     },
   });
+}
+
+// 覆盖原数组方法
+function resetArrayProto() {
+  const arrayProto = Object.create(originProto);
+
+  ["push", "pop", "shift", "unshift", "splice", "reverse", "sort"].forEach(
+    (method) => {
+      arrayProto[method] = function () {
+        originProto[method].apply(this, arguments);
+      };
+    }
+  );
+
+  return arrayProto;
 }
